@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "935994641460",
+    "project_id": "keeponmoving-9cfce",
+    "storage_bucket": "keeponmoving-9cfce.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:935994641460:android:3bb0dbbe5bd9971cfece61",
+        "android_client_info": {
+          "package_name": "com.example.keep_on_moving"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "935994641460-1rd9nb8go1jct0u38akvp5jd3bb2kl7j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlFi_eM7IXtUKSqooM2APkrOmV3JVWHqo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "935994641460-1rd9nb8go1jct0u38akvp5jd3bb2kl7j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
