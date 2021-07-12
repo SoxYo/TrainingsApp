@@ -46,61 +46,45 @@ class _Profile extends State<Profile>{
         centerTitle: true,
         title: Text('Mein Profil'),
       ),
-      body: Column(
-        //mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height:20),
-          Center(
-            child: buildImage(context),
-          ),
-          TextButton(
-              onPressed: (){
-                uploadProfilePic(context);
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Profilbild ändern'),
-                  Icon(Icons.edit, size: 15),
-                ]
-              )
-          ),
-          SizedBox(height:20),
-          Text(
-            'Benutzername',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height:10),
-          buildName(context),
-          SizedBox(height: 20),
-          Text(
-            'Email-Adresse',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height:10),
-          Text(
-            user!.email.toString(),
-          ),
-          SizedBox(height:30),
-          Text(
-            'Gruppen',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height:20),
-          Container(
-            height: 140,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: <Widget>[
-                buildGroup(group),
-                buildGroup(group),
-                buildGroup(group),
-                buildGroup(group),
-              ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height:20),
+            Center(
+              child: buildImage(context),
             ),
-          ),
-        ],
+            TextButton(
+                onPressed: (){
+                  uploadProfilePic(context);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Profilbild ändern'),
+                    Icon(Icons.edit, size: 15),
+                  ]
+                )
+            ),
+            SizedBox(height:20),
+            Text(
+              'Benutzername',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height:10),
+            buildName(context),
+            SizedBox(height: 20),
+            Text(
+              'Email-Adresse',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height:10),
+            Text(
+              user!.email.toString(),
+            ),
+          ],
+        ),
       )
     );
   }
@@ -119,8 +103,8 @@ class _Profile extends State<Profile>{
                 child: Ink.image(
                   image: AssetImage(group.imagePath.toString()),
                   fit: BoxFit.cover,
-                  width: 100,
-                  height: 100,
+                  width: 130,
+                  height: 130,
                   //padding: EdgeInsets.all(24),
                 ),
               ),
@@ -262,8 +246,8 @@ class _Profile extends State<Profile>{
             child: Ink.image(
               image: img.image,
               fit: BoxFit.cover,
-              width: 100,
-              height: 100,
+              width: 130,
+              height: 130,
               //padding: EdgeInsets.all(24),
             ),
           ),

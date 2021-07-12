@@ -103,14 +103,17 @@ class DatabaseService {
 
   Future getPointList(String groupId) async {
     Map<String, dynamic> list = {};
-    return await FirebaseFirestore.instance
+    var data = await FirebaseFirestore.instance
         .collection("groups")
         .doc(groupId)
-        .get();
-
-            //.then((value) => value.get('points'));
-    //return data;
+        .get()
+        .then((value) => value.get('points'));
+    return data;
     //data.forEach((k, v) => list.map((key, value) => null))
+  }
+
+  Future<List<String>> getMembers(groupId) async {
+    return await groupCollection.doc(groupId).get().then((value) => value.get('members'));
   }
 
   Future createExercise(String title, String category, String thumbnailUrl,
@@ -162,7 +165,8 @@ class DatabaseService {
         .then((val) {
           val.reference.update({
             "points": {
-              ['points.$uid'] :{
+              //['points.$uid']
+              uid :{
                 "score": newScore,
                 "uid": uid,
               }

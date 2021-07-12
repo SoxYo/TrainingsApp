@@ -1,7 +1,10 @@
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:keep_on_moving/model/RankingElement.dart';
 import 'package:keep_on_moving/model/UserModel.dart';
+import 'package:keep_on_moving/services/auth.dart';
 import 'package:keep_on_moving/services/database.dart';
 import 'package:keep_on_moving/widgets/LoadingWidget.dart';
 
@@ -11,17 +14,22 @@ class RankingScreen extends StatefulWidget {
 }
 
 class _RankingScreen extends State<RankingScreen> {
-  List<RankingElement> rankingList = [];
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
-    print(rankingList.length);
 
-    return FutureBuilder(
+    var currentUserId = AuthService().getCurrentUID();
+    List<String> userIds = [];
+    List<RankingElement> ranking = [];
+
+    return FutureBuilder<Map<String, dynamic>>(
         future: rankingData(),
         builder: (_, snapshot) {
           if (snapshot.hasError) {}
           if (!snapshot.hasData) {}
+
+          var data = snapshot.data!;
 
           return Scaffold(
             appBar: AppBar(
@@ -37,7 +45,7 @@ class _RankingScreen extends State<RankingScreen> {
                 IconButton(
                   icon: Icon(Icons.update),
                   onPressed: () async {
-                    rankingData();
+                    userIds = getAllMembers();
                   },
                 )
               ],
@@ -65,19 +73,26 @@ class _RankingScreen extends State<RankingScreen> {
                 ),
                 Flexible(
                   flex: 1,
-                  child: ListView.builder(
-                      itemCount: rankingList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        rankingList
-                            .sort((a, b) => a.points.compareTo(b.points));
-                        return buildRankingElement(
-                            rankingList[index].userName.toString(),
-                            rankingList[index].points.toString());
-                      }),
+                  child: !data.containsKey(currentUserId) || data[currentUserId].isEmpty
+                      ? Container(
+                          child: Text('Daten konnten nicht geladen werden.'),
+                        )
+                      : ListView.builder(
+                          itemCount: userIds.length,
+                          itemBuilder: (BuildContext context, int index) {
+
+                            for(var user in userIds){
+                              print("In der Liste: $user");
+                              ranking.add((data[user].map((v) => buildRankingElement(v[user]['userName'], v[user]['score'], v[user]['profilePic']))));
+                            }
+                            return Container(
+                              child: buildRankingElement(ranking[index].userName, ranking[index].points.toString(), ranking[index].imagePath)
+                            );
+                          },
+                  ),
                 ),
-              ],
-            ),
-          );
+              ],)
+            );
         });
   }
 
@@ -88,7 +103,13 @@ class _RankingScreen extends State<RankingScreen> {
     return day + '.' + month + '.' + year;
   }
 
-  Widget buildRankingElement(String name, String points) {
+  Widget buildRankingElement(String name, String points, String imageUrl) {
+    Image img;
+    if (imageUrl == null || imageUrl == "")
+      img = Image.asset('assets/images/profile_dummy.png');
+    else
+      img = Image.network(imageUrl);
+
     return Container(
       padding: EdgeInsets.all(5.0),
       height: 50,
@@ -103,10 +124,9 @@ class _RankingScreen extends State<RankingScreen> {
                 width: 30,
                 height: 30,
                 decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: AssetImage('assets/images/profile_dummy.png'))),
+                  shape: BoxShape.circle,
+                  image: DecorationImage(fit: BoxFit.fill, image: img.image),
+                ),
               ),
             ),
             Flexible(child: SizedBox(width: 10)),
@@ -138,19 +158,25 @@ class _RankingScreen extends State<RankingScreen> {
 
   //Future<Map<String, dynamic>>
   Future<Map<String, dynamic>> rankingData() async {
-    int count = 0;
+    Map<String, dynamic> user = await DatabaseService().getCurrentUser();
     String currentGId = await DatabaseService().getCurrentGroup();
+    print(currentGId);
     Map<String, dynamic> rankingData =
         await DatabaseService().getPointList(currentGId);
-    rankingData.forEach((key, value) async {
-      var id = await DatabaseService().getUserByID(value['uid']);
-      var pic = await DatabaseService().getImageByID(value['uid']);
-      rankingList.add(new RankingElement(
-          imagePath: pic.toString(), userName: id, points: value['score']));
-          print(count);
-          count++;
-    });
-    print(count);
+/*    var id;
+    var pic;
+    rankingData.forEach((key, value) {
+      rankingData.putIfAbsent("userName", () => user['name']);
+      rankingData.putIfAbsent("profilePic", () => user['imagePath']);
+    });*/
+    rankingData.putIfAbsent("userName", () => user['name']);
+    rankingData.putIfAbsent("profilePic", () => user['imagePath']);
+    print("Ranking:$rankingData");
     return rankingData;
+  }
+
+  getAllMembers(){
+    String currentGId = DatabaseService().getCurrentGroup() as String;
+    return DatabaseService().getMembers(currentGId);
   }
 }

@@ -35,9 +35,11 @@ class _ProfileWidget extends State<ProfileWidget>{
   var uid = AuthService().getCurrentUID();
 
 
-
   @override
   Widget build(BuildContext context) {
+
+
+    print("USER:$uid");
 
     return Center(
       child: Row(
